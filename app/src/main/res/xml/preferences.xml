@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceCategory>
+
+    <EditTextPreference
+        android:id="@+id/puzzleName"
+        android:dialogTitle="Enter the name for your word search"
+        android:fontFamily="@font/roboto_medium"
+        android:icon="@drawable/ic_edit_black_24dp"
+        android:inputType="textCapWords"
+        android:key="key_name_puzzle"
+        android:textColor="@color/black"
+        android:textSize="40dp"
+        android:title="Puzzle Name"></EditTextPreference>
+
+    <ListPreference
+        android:entries="@array/size_word_array"
+        android:entryValues="@array/size_word_values"
+        android:icon="@drawable/ic_photo_size_select_small_black_24dp"
+        android:key="key_size_puzzle"
+        android:summary="Enter the name size for your word search"
+        android:title="Size">
+    </ListPreference>
+
+    <Preference android:title="Add words in your puzzle"
+                android:icon="@drawable/ic_words_for_puzzle">
+
+        <intent android:targetPackage="a1141532.lsc.uabc.wordsearch"
+                android:targetClass="a1141532.lsc.uabc.wordsearch.WordsActivity">
+        </intent>
+    </Preference>
+
+</PreferenceCategory>
+
+</PreferenceScreen>

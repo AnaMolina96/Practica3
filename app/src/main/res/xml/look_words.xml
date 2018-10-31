@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:title="Words orientation"
+        android:dialogTitle="Select how you want words orientation"
+        android:key="key_orientation_words"
+        android:entries="@array/orientation_word_array"
+        android:entryValues="@array/orientation_word_values"
+        android:icon="@drawable/ic_border_outer_black_24dp">
+    </ListPreference>
+
+    <ListPreference
+        android:dialogTitle="Select how you want words to be"
+        android:entries="@array/sense_word_array"
+        android:entryValues="@array/sense_word_values"
+        android:icon="@drawable/ic_compare_arrows_black_24dp"
+        android:key="key_orientation_words"
+        android:title="Sense of words"></ListPreference>
+
+</PreferenceScreen>

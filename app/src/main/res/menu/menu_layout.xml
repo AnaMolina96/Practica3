@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="Item"
+        android:id="@+id/look_words"
+        android:icon="@drawable/show_wordsearch"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/menu_show_puzzle"
+        android:title="Show Puzzle"
+        android:icon="@drawable/puzzle"
+        app:showAsAction="ifRoom"/>
+
+</menu>

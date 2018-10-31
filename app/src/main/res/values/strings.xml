@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">WordSearch</string>
+    <string-array name="size_word_array">
+        <item>10 x 10</item>
+        <item>14 x 14</item>
+        <item>18 x 18</item>
+    </string-array>
+
+    <string-array name="size_word_values">
+        <item>10</item>
+        <item>14</item>
+        <item>18</item>
+    </string-array>
+
+    <string-array name="orientation_word_array">
+        <item>Vertical</item>
+        <item>Horizontal</item>
+        <item>Diagonal</item>
+    </string-array>
+
+    <string-array name="orientation_word_values">
+        <item>Vertical</item>
+        <item>Horizontal</item>
+        <item>Diagonal</item>
+    </string-array>
+
+    <string-array name="sense_word_array">
+        <item>Reverse</item>
+        <item>Normal</item>
+    </string-array>
+
+    <string-array name="sense_word_values">
+        <item>Reverse</item>
+        <item>Normal</item>
+    </string-array>
+
+</resources>

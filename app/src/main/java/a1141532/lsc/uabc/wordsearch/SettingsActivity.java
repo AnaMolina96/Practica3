@@ -31,6 +31,17 @@ public class SettingsActivity extends AppCompatActivity {
     // Con este método de tipo PreferenceFragment es un Fragmento donde nos guarda todos los
     // datos que nos proporciona el usuario y lo guarda en memoria, este sirve como un settings
     // en nuestra aplicación.
+
+    ////
+    //
+    //
+    //
+    //
+    ///
+
+
+
+
     public static class PuzzleNameFragment extends PreferenceFragment {
 
         @Override

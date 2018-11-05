@@ -1,5 +1,8 @@
 package a1141532.lsc.uabc.wordsearch;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Word {
 
     public static final int POSITION_HORIZONTAL = 1;
@@ -13,6 +16,11 @@ public class Word {
     private String word;
     private int mode;
     private int orientation;
+    private List<Integer> indexes;
+
+    public Word(){
+        indexes = new ArrayList<>();
+    }
 
     public String getWord() {
         return word;
@@ -36,5 +44,23 @@ public class Word {
 
     public void setOrientation(int orientation) {
         this.orientation = orientation;
+    }
+
+    public void addIndex(Integer ... index){
+        for(Integer i: index){
+            indexes.add(i);
+        }
+    }
+
+    public boolean hasIndex(Integer index){
+        return indexes.contains(index);
+    }
+
+    public List<Integer> getIndexes(){
+        return indexes;
+    }
+
+    public void clearIndexes(){
+        indexes.clear();
     }
 }

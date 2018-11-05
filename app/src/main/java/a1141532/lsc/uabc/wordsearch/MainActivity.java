@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static Random random;
     private String alphabet="abcdefghijklemnopqrstuvwxyz";
     private static GridLayout gridLayoutWordSearch;
+    private boolean toggleSoup;
     String words_puzzle = "", puzzleName = "", size_puzzle ="";
     //int vertical = 14, horizontal = 14;
     private static List<Word> words = new ArrayList<>();
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        toggleSoup = true;
 
         context = this.getBaseContext();
         random = new Random();
@@ -82,14 +85,31 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceAsColor")
     public void paintWordSearch(){
-        TextView txt = new TextView(this);
+        Log.i("PAINT", "hi");
+        TextView txt;
+        if(toggleSoup){
+            //paint to white all
+            for(Word w: words){
+                for(int index : w.getIndexes()){
+                    txt = (TextView) gridLayoutWordSearch.getChildAt(index);
+                    txt.setBackgroundColor(0x00000000);
+                    txt.setHighlightColor(0x00000000);
 
-        for(int i = 0; i < size; i++){
-            for(int k = 0; k < size; k++){
-                txt.setBackgroundColor(R.color.black);
-                txt.setTextColor(R.color.white);
+                }
+            }
+        }else{
+            //highlight
+            for(Word w: words){
+                for(int index : w.getIndexes()){
+                    txt = (TextView) gridLayoutWordSearch.getChildAt(index);
+                    txt.setTextColor(R.color.white);
+                    txt.setHighlightColor(R.color.white);
+                    txt.setBackgroundColor(R.color.white);
+
+                }
             }
         }
+        toggleSoup = !toggleSoup;
     }
 
     @Override
@@ -109,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.look_words:
                     paintWordSearch();
+                    return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -134,27 +155,26 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("ResourceAsColor")
     private static void onAddWord(Word word){
-
+        List<View> textViews = new ArrayList<>();
         int row = random.nextInt(size - 4) + 2;
         int col = random.nextInt(size - 4) + 2;
 
-        for(char c: word.getWord().toCharArray()){
-            int toIndex = (row*size) + col;
+        for (char c : word.getWord().toCharArray()) {
+            int toIndex = (row * size) + col;
+            word.addIndex(toIndex);
 
-            //deleting
-            gridLayoutWordSearch.removeViewAt(toIndex);
-            //adding
             TextView txt = new TextView(context);
-            txt.setPadding(7,0,7,0);
+            txt.setPadding(7, 0, 7, 0);
             txt.setTextSize(18);
             txt.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
             txt.setText(String.valueOf(c));
             txt.setBackgroundColor(R.color.green);
             txt.setTextColor(R.color.design_default_color_primary_dark);
-            gridLayoutWordSearch.addView(txt,toIndex);
+            textViews.add(txt);
+            //gridLayoutWordSearch.addView(txt, toIndex);
 
             //setting up next letter
-            switch (word.getMode()){
+            switch (word.getMode()) {
                 case Word.POSITION_HORIZONTAL:
                     col++;
                     break;
@@ -168,10 +188,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        switch (word.getOrientation()){
+        switch (word.getOrientation()) {
             case Word.ORIENTATION_REVERSE:
-                String word_reverse="";
-                for(int x=word.getWord().length()-1;x>=0;x--){
+                String word_reverse = "";
+                for (int x = word.getWord().length() - 1; x >= 0; x--) {
                     word_reverse = word_reverse + word.getWord().charAt(x);
                 }
                 word.setWord(word_reverse);
@@ -179,7 +199,24 @@ public class MainActivity extends AppCompatActivity {
             case Word.ORIENTATION_NORMAL:
                 break;
         }
+
         textViewWordsToSearch.append(word.getWord() + "\t");
+
+        for(int i = 0; i<textViews.size(); i++){
+            gridLayoutWordSearch.removeViewAt(word.getIndexes().get(i));
+            gridLayoutWordSearch.addView(textViews.get(i), word.getIndexes().get(i));
+        }
+    }
+
+    private static boolean indexIsUsed(int index){
+        boolean isUsed = false;
+        for(Word w: words){
+            isUsed = w.hasIndex(index);
+            if(isUsed){
+                return isUsed;
+            }
+        }
+        return isUsed;
     }
 
 }

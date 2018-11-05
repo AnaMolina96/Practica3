@@ -61,8 +61,8 @@ public class WordsActivity extends AppCompatActivity implements View.OnClickList
                    position = "vertical";
                }if(position_horizontal.isChecked()){
                     position = "horizontal";
-               }if(position_vertical.isChecked()){
-                    position = "vertical";
+               }if(position_diagonal.isChecked()){
+                    position = "diagonal";
                }
 
                if(orientation_normal.isChecked()){

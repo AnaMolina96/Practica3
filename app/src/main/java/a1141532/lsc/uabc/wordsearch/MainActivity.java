@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -24,12 +25,14 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static TextView textViewNameWordSearch,textViewWordsToSearch;
+    private static TextView textViewNameWordSearch;
+    private static List<Button> editWords;
     private static int size;
     private static Context context;
     private static Random random;
     private String alphabet="abcdefghijklemnopqrstuvwxyz";
     private static GridLayout gridLayoutWordSearch;
+    private static android.support.v7.widget.GridLayout gridWords;
     private boolean toggleSoup;
     String words_puzzle = "", puzzleName = "", size_puzzle ="";
     //int vertical = 14, horizontal = 14;
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         context = this.getBaseContext();
         random = new Random();
         setContentView(R.layout.activity_main);
+        editWords = new ArrayList<>();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -54,11 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
         size = Integer.parseInt(size_puzzle);
 
-        textViewWordsToSearch = findViewById(R.id.textViewWordsToSearch);
         textViewNameWordSearch = findViewById(R.id.textViewNameWordSearch);
 
         gridLayoutWordSearch = findViewById(R.id.gridLayoutWordSearch);
         gridLayoutWordSearch.setColumnCount(size);
+
+        gridWords = findViewById(R.id.gridWords);
 
         Log.d("AAA","Size: " + size_puzzle);
         //Toast.makeText(getApplicationContext(),"Size" + size_puzzle,Toast.LENGTH_LONG).show();
@@ -137,6 +142,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public static void addWord(Word word, int index){
+        switch (word.getOrientation()){
+            case Word.ORIENTATION_REVERSE:
+                String word_reverse="";
+                for(int x=word.getWord().length()-1;x>=0;x--){
+                    word_reverse = word_reverse + word.getWord().charAt(x);
+                }
+                word.setWord(word_reverse);
+                break;
+            case Word.ORIENTATION_NORMAL:
+                break;
+        }
+
+
+
+        beforeDeleteWord(index);
+        words.remove(index);
+        words.add(index,word);
+
+        Button b = new Button(context);
+        b.setText(word.getWord());
+        b.setOnClickListener((v) -> {
+            Intent i = new Intent(context, EditWordActivity.class);
+            i.putExtra("index", words.indexOf(word));
+            i.putExtra("wordname", word.getWord());
+            context.startActivity(i);
+        });
+        gridWords.addView(b);
+
+        onAddWord(word);
+    }
+
     public static void addWord(Word word){
         switch (word.getOrientation()){
             case Word.ORIENTATION_REVERSE:
@@ -149,6 +186,17 @@ public class MainActivity extends AppCompatActivity {
             case Word.ORIENTATION_NORMAL:
                 break;
         }
+
+        Button b = new Button(context);
+        b.setText(word.getWord());
+        b.setOnClickListener((v) -> {
+            Intent i = new Intent(context, EditWordActivity.class);
+            i.putExtra("index", words.indexOf(word));
+            i.putExtra("wordname", word.getWord());
+            context.startActivity(i);
+        });
+        gridWords.addView(b);
+
         words.add(word);
         onAddWord(word);
     }
@@ -200,11 +248,26 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        textViewWordsToSearch.append(word.getWord() + "\t");
+
+
 
         for(int i = 0; i<textViews.size(); i++){
             gridLayoutWordSearch.removeViewAt(word.getIndexes().get(i));
             gridLayoutWordSearch.addView(textViews.get(i), word.getIndexes().get(i));
+        }
+    }
+
+    private static void beforeDeleteWord(int index){
+        Word word = words.get(index);
+        gridWords.removeViewAt(index);
+        for(int i: word.getIndexes()){
+            gridLayoutWordSearch.removeViewAt(i);
+            TextView t = new TextView(context);
+            t.setPadding(7, 0, 7, 0);
+            t.setTextSize(18);
+            t.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
+            t.setText("a");
+            gridLayoutWordSearch.addView(t, i);
         }
     }
 

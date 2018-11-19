@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 public class EditWordActivity extends AppCompatActivity {
 
@@ -45,6 +46,11 @@ public class EditWordActivity extends AppCompatActivity {
         saveChanges.setOnClickListener((v) ->{
             Word word = new Word();
             word.setWord(txtWord.getText().toString());
+            if(word.getWord().length() > MainActivity.size){
+                Toast.makeText(this,"Word is too large", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if(radioHor.isChecked()){
                 word.setMode(Word.POSITION_HORIZONTAL);
             }else if(radioVer.isChecked()){

@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static TextView textViewNameWordSearch;
     private static List<Button> editWords;
-    private static int size;
+    public static int size;
     private static Context context;
     private static Random random;
     private static String alphabet="abcdefghijklemnopqrstuvwxyz";

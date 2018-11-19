@@ -52,6 +52,10 @@ public class WordsActivity extends AppCompatActivity implements View.OnClickList
             public void onClick(View v) {
 
                 String wordName = wordToAdd.getText().toString();
+                if(wordName.length() > MainActivity.size){
+                    Toast.makeText(this,"Word is too large", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String orientation="";
                 String position = "";
 

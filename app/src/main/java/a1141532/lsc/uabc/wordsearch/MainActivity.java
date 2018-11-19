@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private static int size;
     private static Context context;
     private static Random random;
-    private String alphabet="abcdefghijklemnopqrstuvwxyz";
+    private static String alphabet="abcdefghijklemnopqrstuvwxyz";
     private static GridLayout gridLayoutWordSearch;
     private static android.support.v7.widget.GridLayout gridWords;
     private boolean toggleSoup;
@@ -154,23 +155,9 @@ public class MainActivity extends AppCompatActivity {
             case Word.ORIENTATION_NORMAL:
                 break;
         }
-
-
-
         beforeDeleteWord(index);
         words.remove(index);
         words.add(index,word);
-
-        Button b = new Button(context);
-        b.setText(word.getWord());
-        b.setOnClickListener((v) -> {
-            Intent i = new Intent(context, EditWordActivity.class);
-            i.putExtra("index", words.indexOf(word));
-            i.putExtra("wordname", word.getWord());
-            context.startActivity(i);
-        });
-        gridWords.addView(b);
-
         onAddWord(word);
     }
 
@@ -186,70 +173,62 @@ public class MainActivity extends AppCompatActivity {
             case Word.ORIENTATION_NORMAL:
                 break;
         }
-
-        Button b = new Button(context);
-        b.setText(word.getWord());
-        b.setOnClickListener((v) -> {
-            Intent i = new Intent(context, EditWordActivity.class);
-            i.putExtra("index", words.indexOf(word));
-            i.putExtra("wordname", word.getWord());
-            context.startActivity(i);
-        });
-        gridWords.addView(b);
-
         words.add(word);
         onAddWord(word);
     }
 
     @SuppressLint("ResourceAsColor")
     private static void onAddWord(Word word){
+        int[] indexes = getAvailableWordIndexes(word);
+        printArray(indexes);
         List<View> textViews = new ArrayList<>();
-        int row = random.nextInt(size - 4) + 2;
-        int col = random.nextInt(size - 4) + 2;
 
-        for (char c : word.getWord().toCharArray()) {
-            int toIndex = (row * size) + col;
-            word.addIndex(toIndex);
-
-            TextView txt = new TextView(context);
-            txt.setPadding(7, 0, 7, 0);
-            txt.setTextSize(18);
-            txt.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
-            txt.setText(String.valueOf(c));
-            txt.setBackgroundColor(R.color.green);
-            txt.setTextColor(R.color.design_default_color_primary_dark);
-            textViews.add(txt);
-            //gridLayoutWordSearch.addView(txt, toIndex);
-
-            //setting up next letter
-            switch (word.getMode()) {
-                case Word.POSITION_HORIZONTAL:
-                    col++;
-                    break;
-                case Word.POSITION_VERTICAL:
-                    row++;
-                    break;
-                case Word.POSITION_DIAGONAL:
-                    row++;
-                    col++;
-                    break;
-
-            }
+        // update edit buttons
+        gridWords.removeAllViews();
+        for(Word w: words){
+            Button btn = new Button(context);
+            btn.setText(w.getWord());
+            btn.setOnClickListener((v) -> {
+                Intent intent = new Intent(context, EditWordActivity.class);
+                intent.putExtra("index", words.indexOf(w));
+                intent.putExtra("wordname", w.getWord());
+                context.startActivity(intent);
+            });
+            gridWords.addView(btn);
         }
+
         switch (word.getOrientation()) {
             case Word.ORIENTATION_REVERSE:
-                String word_reverse = "";
-                for (int x = word.getWord().length() - 1; x >= 0; x--) {
-                    word_reverse = word_reverse + word.getWord().charAt(x);
+                for(int i = word.getWord().length()-1; i>=0; i--){
+                    char letter = word.getWord().charAt(i);
+                    int index = indexes[i];
+                    word.addIndex(index);
+                    TextView txt = new TextView(context);
+                    txt.setPadding(7, 0, 7, 0);
+                    txt.setTextSize(18);
+                    txt.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
+                    txt.setText(String.valueOf(letter));
+                    txt.setBackgroundColor(R.color.green);
+                    txt.setTextColor(R.color.design_default_color_primary_dark);
+                    textViews.add(txt);
                 }
-                word.setWord(word_reverse);
                 break;
             case Word.ORIENTATION_NORMAL:
+                for(int i = 0; i<word.getWord().length(); i++){
+                    char letter = word.getWord().charAt(i);
+                    int index = indexes[i];
+                    word.addIndex(index);
+                    TextView txt = new TextView(context);
+                    txt.setPadding(7, 0, 7, 0);
+                    txt.setTextSize(18);
+                    txt.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
+                    txt.setText(String.valueOf(letter));
+                    txt.setBackgroundColor(R.color.green);
+                    txt.setTextColor(R.color.design_default_color_primary_dark);
+                    textViews.add(txt);
+                }
                 break;
         }
-
-
-
 
         for(int i = 0; i<textViews.size(); i++){
             gridLayoutWordSearch.removeViewAt(word.getIndexes().get(i));
@@ -266,9 +245,103 @@ public class MainActivity extends AppCompatActivity {
             t.setPadding(7, 0, 7, 0);
             t.setTextSize(18);
             t.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);
-            t.setText("a");
+            char letter = alphabet.charAt(random.nextInt(alphabet.length()));
+            t.setText(String.valueOf(letter));
             gridLayoutWordSearch.addView(t, i);
         }
+    }
+
+
+    private static int[] getAvailableWordIndexes(Word word){
+        List<int[]> indexes = new ArrayList<>();
+        int wordSize = word.getWord().length();
+        int[] aux = new int[wordSize];
+        int max = Math.abs(wordSize - MainActivity.size);
+        int counter = 0;
+        boolean isValid = true;
+        switch(word.getMode()){
+            case Word.POSITION_HORIZONTAL:
+                for(int row = 0;row<MainActivity.size;row++){
+                    for(int col=0; col<MainActivity.size;col++) {
+                       for(int val = 0; val<wordSize;val++){
+                           if( (col+val) < MainActivity.size){
+                               int index = pointToIndex(row, col + val);
+                               isValid = isValid && !indexIsUsed(index);
+                               if(isValid){
+                                   aux[val] = index;
+                               }
+                           }else{
+                               isValid = false;
+                           }
+                       }
+                       if(isValid){
+                           indexes.add(aux);
+                           aux = new int[wordSize];
+                       }
+                       isValid = true;
+                    }
+                }
+                break;
+            case Word.POSITION_VERTICAL:
+                for(int col = 0;col<MainActivity.size;col++){
+                    for(int row=0; row<MainActivity.size;row++) {
+                        for(int val = 0; val<wordSize;val++){
+                            if( (row+val) < MainActivity.size){
+                                int index = pointToIndex(row+val, col);
+                                isValid = isValid && !indexIsUsed(index);
+                                if(isValid){
+                                    aux[val] = index;
+                                }
+                            }else{
+                                isValid = false;
+                            }
+                        }
+                        if(isValid){
+                            indexes.add(aux);
+                            aux = new int[wordSize];
+                        }
+                        isValid = true;
+                    }
+                }
+                break;
+            case Word.POSITION_DIAGONAL:
+                for(int row = 0;row<MainActivity.size;row++){
+                    for(int col=0; col<MainActivity.size;col++) {
+                        for(int val = 0; val<wordSize;val++){
+                            if( (col+val) < MainActivity.size && (row+val) < MainActivity.size){
+                                int index = pointToIndex(row + val, col + val);
+                                isValid = isValid && !indexIsUsed(index);
+                                if(isValid){
+                                    aux[val] = index;
+                                }
+                            }else{
+                                isValid = false;
+                            }
+                        }
+                        if(isValid){
+                            indexes.add(aux);
+                            aux = new int[wordSize];
+                        }
+                        isValid = true;
+                    }
+                }
+                break;
+        } //end switch
+        int i = random.nextInt(indexes.size());
+        return indexes.get(i);
+
+    }
+
+    private static void printArray(int[] array){
+        String val = "";
+        for(int i: array){
+            val += i + " ";
+        }
+        Log.i("INDEX",val);
+    }
+
+    private static int pointToIndex(int row, int col){
+        return (row * size) + col;
     }
 
     private static boolean indexIsUsed(int index){
@@ -281,5 +354,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return isUsed;
     }
+
+
 
 }

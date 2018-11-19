@@ -3,12 +3,14 @@ package a1141532.lsc.uabc.wordsearch;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 
 public class EditWordActivity extends AppCompatActivity {
 
     private Integer index;
     private String wordname;
+    private static EditText txtWord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,7 @@ public class EditWordActivity extends AppCompatActivity {
             index = Integer.parseInt(aux);
         }
 
+        txtWord = (EditText) findViewById(R.id.txtEditWordName);
         Button saveChanges = (Button) findViewById(R.id.btnEditSaveChanges);
         RadioButton radioHor = (RadioButton) findViewById(R.id.radioEditHorizontal);
         RadioButton radioVer = (RadioButton) findViewById(R.id.radioEditVertical);
@@ -37,9 +40,11 @@ public class EditWordActivity extends AppCompatActivity {
         RadioButton radioNormal = (RadioButton) findViewById(R.id.radioEditNormal);
         RadioButton radioRev = (RadioButton) findViewById(R.id.radioEditReverse);
 
+        txtWord.setText(wordname);
+
         saveChanges.setOnClickListener((v) ->{
             Word word = new Word();
-            word.setWord(wordname);
+            word.setWord(txtWord.getText().toString());
             if(radioHor.isChecked()){
                 word.setMode(Word.POSITION_HORIZONTAL);
             }else if(radioVer.isChecked()){

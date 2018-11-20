@@ -45,7 +45,7 @@ public class EditWordActivity extends AppCompatActivity {
 
         saveChanges.setOnClickListener((v) ->{
             Word word = new Word();
-            word.setWord(txtWord.getText().toString());
+            word.setWord(txtWord.getText().toString().trim());
             if(word.getWord().length() > MainActivity.size){
                 Toast.makeText(this,"Word is too large", Toast.LENGTH_SHORT).show();
                 return;

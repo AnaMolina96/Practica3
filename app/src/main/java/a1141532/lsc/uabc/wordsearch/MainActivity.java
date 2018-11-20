@@ -192,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(context, EditWordActivity.class);
                 intent.putExtra("index", words.indexOf(w));
                 intent.putExtra("wordname", w.getWord());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             });
             gridWords.addView(btn);
